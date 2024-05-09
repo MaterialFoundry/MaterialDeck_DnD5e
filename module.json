@@ -21,8 +21,8 @@
             "type": "module",
             "manifest": "https://github.com/MaterialFoundry/MaterialDeck/releases/latest/download/module.json",
             "compatibility": {
-                "minimum": "1.6.3",
-                "verified": "1.6.3"
+                "minimum": "1.7.0",
+                "verified": "1.7.0"
             }
         }]
     },
