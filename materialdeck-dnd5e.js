@@ -1,6 +1,3 @@
-import { materialDeck } from "../MaterialDeck/MaterialDeck.js";
-
-
 const data = {
     moduleId: 'materialdeck-dnd5e',
     systemId: 'dnd5e',
@@ -154,7 +151,7 @@ class system {
     getAbilityList() {
         const keys = Object.keys(this.conf.abilities);
         let abilities = [];
-        if (materialDeck.compatibleSystem("2.2.0"))
+        if (game.materialDeck.compatibleSystem("2.2.0"))
         for (let k of keys) abilities.push({value:this.conf.abilityAbbreviations?.[k], name:this.conf.abilities?.[k]})
         else 
             for (let k of keys) abilities.push({value:this.conf.abilities?.[k].abbreviation, name:this.conf.abilities?.[k].label})
@@ -393,7 +390,7 @@ class system {
 Hooks.once('MaterialDeck_Ready', () => {
     const moduleData = game.modules.get(data.moduleId);
 
-    materialDeck.registerSystem({
+    game.materialDeck.registerSystem({
         systemId: data.systemId,
         moduleId: data.moduleId,
         systemName: data.systemName,
