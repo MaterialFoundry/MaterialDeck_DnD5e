@@ -1,0 +1,54 @@
+.imgContainer {
+  float: right; 
+  max-width: 450px; 
+  margin-left:10px;
+  text-align: center;
+}
+
+@media (max-width:700px) {
+  .imgContainer {
+    min-width: 100%; 
+  }
+
+  .imgContainer img {
+    max-width: 450px;
+  }
+}
+
+/****************************************************
+ * Changelog Admonition
+ ****************************************************/
+
+.md-typeset .admonition.changelog,
+.md-typeset details.changelog {
+  border-color: rgb(0, 0, 0);
+}
+
+.md-typeset .changelog > summary {
+  font-size: 1.1em;
+  padding-left: 15px;
+}
+
+.md-typeset .changelog > .admonition-title::before,
+.md-typeset .changelog > summary::before {
+  display: none !important;
+}
+
+/****************************************************
+ * Color elmnts
+ ****************************************************/
+red {
+  color: rgb(255, 59, 59);
+}
+
+blue {
+  color: rgb(75, 75, 255);
+}
+
+yellow {
+  color: rgb(207, 207, 8);
+}
+
+green {
+  color: rgb(85, 199, 85)
+}

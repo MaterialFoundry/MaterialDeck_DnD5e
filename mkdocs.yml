@@ -1,0 +1,59 @@
+site_name: Material Deck DnD5e Documentation
+site_url: https://materialfoundry.github.io/MaterialDeck_DnD5e/
+nav:
+  - Home: index.md
+  - Actions:
+    - Combat Tracker: actions/combatTracker.md
+    - Other Actions: actions/otherActions.md
+    - Token: 
+      - Token: actions/token.md
+theme:
+  name: material
+  palette:
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: black
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - scheme: default
+      primary: blue grey
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+  
+  favicon: img/icon.ico
+  logo: img/MaterialFoundry.png
+
+  features:
+    - navigation.tracking
+    - navigation.tabs
+    - toc.integrate
+    - navigation.top
+
+plugins:
+  - search
+
+markdown_extensions:
+  - attr_list
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+
+extra:
+  social:
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/3hd4G6TkmA
+    - icon: fontawesome/brands/patreon
+      link: https://www.patreon.com/materialfoundry
+
+extra_css:
+  - style.css
