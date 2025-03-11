@@ -1,37 +1,67 @@
 {
     "id": "materialdeck-dnd5e",
     "title": "Material Deck - Dungeons & Dragons 5e",
-    "description": "This module adds support for 'Dungeons & Dragons 5e' to Material Deck.",
-    "version": "1.0.2",
+    "description": "This module adds support for 'Dungeons & Dragons 5e' to 'Material Deck'.",
+    "version": "2.0.0",
     "authors": [
         {
-            "name": "CDeenen",
+            "name": "Material Foundry",
             "email": "info@materialfoundry.nl",
-            "discord": "Cris#6864",
-            "patreon": "MaterialFoundry",
-            "reddit": "CDeenen123"
+            "discord": "materialfoundry",
+            "patreon": "MaterialFoundry"
         }
     ],
     "esmodules": [
         "./materialdeck-dnd5e.js"
     ],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        }
+    ],
     "relationships": {
-        "requires": [{
-            "id": "MaterialDeck",
-            "type": "module",
-            "manifest": "https://github.com/MaterialFoundry/MaterialDeck/releases/latest/download/module.json",
+        "systems": [{
+            "id": "dnd5e",
+            "type": "system",
+            "manifest": "https://raw.githubusercontent.com/foundryvtt/dnd5e/master/system.json",
             "compatibility": {
-                "minimum": "1.7.1",
-                "verified": "1.7.1"
+                "minimum": "4.0.0",
+                "verified": "4.3.6"
             }
-        }]
+        }],
+        "requires": [
+            {
+                "id": "materialdeck-premium",
+                "type": "module",
+                "compatibility": {
+                    "minimum": "2.0.0",
+                    "verified": "2.0.0"
+                }
+            }
+        ]
     },
     "compatibility": {
-        "minimum": "10",
-        "verified": "11"
+        "minimum": "12",
+        "verified": "13"
     },
-    "manifestPlusVersion": "1.1.0",
-    "url": "https://github.com/MaterialFoundry/MaterialDeck_DnD5e",
+    "media": [
+        {
+            "type": "icon",
+            "url": "modules/materialdeck-dnd5e/img/MaterialFoundry512x512.png"
+        },{
+            "type": "setup",
+            "url": "modules/materialdeck-dnd5e/img/MaterialFoundry2560x1440.jpg"
+        },{
+            "type": "cover",
+            "url": "modules/materialdeck-dnd5e/img/MaterialFoundry2560x1440.jpg"
+        }
+    ],
+    "license": "LICENSE",
+    "url": "https://materialfoundry.github.io/MaterialDeck-DnD5e/",
+    "readme": "https://materialfoundry.github.io/MaterialDeck-DnD5e/",
+    "bugs": "https://github.com/MaterialFoundry/MaterialDeck_DnD5e/issues",
     "manifest": "https://github.com/MaterialFoundry/MaterialDeck_DnD5e/releases/latest/download/module.json",
     "download": "https://github.com/MaterialFoundry/MaterialDeck_DnD5e/releases/download/v1.0.2/module.zip"
 }

@@ -5,8 +5,7 @@ nav:
   - Actions:
     - Combat Tracker: actions/combatTracker.md
     - Other Actions: actions/otherActions.md
-    - Token: 
-      - Token: actions/token.md
+    - Token: actions/token.md
 theme:
   name: material
   palette:

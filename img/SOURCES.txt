@@ -1,0 +1,5 @@
+hp_empty.png: made using/modified from Elgato's key creator: https://www.elgato.com/en/gaming/keycreator
+d20.png: Edited from Foundry's icon folder 'icons/dice/d20black.svg'
+progression.png: https://game-icons.net/1x1/delapouite/progression.html
+weight.png: https://game-icons.net/1x1/delapouite/weight.html#download
+
