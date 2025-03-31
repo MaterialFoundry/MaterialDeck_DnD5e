@@ -116,19 +116,6 @@ export const spellbookMode = {
         const displaySettings = data.settings.display.spellbookMode.setSync;
         const filter = data.settings.spellbookMode.setSync.selection.filter.preparation;
 
-        let thisSelected = false;
-        const syncedSettings = game.materialDeck.streamDeck.syncedSettings?.page?.token?.['spellbookMode.syncFilter'];
-        if (syncedSettings && syncedSettings.length > 0) {
-            thisSelected = true;
-            for (let s of syncedSettings) {
-                const val = game.materialDeck.Helpers.getNestedObjectValue(s.key.replace('spellbookMode.', ''), data.settings.spellbookMode.setSync);
-                if (val !== s.value) {
-                    thisSelected = false;
-                    break;
-                }
-            }
-        }
-
         let icon = '';
         if (displaySettings.icon) {
             let iconSrc = 'fas fa-hat-wizard';
@@ -158,6 +145,7 @@ export const spellbookMode = {
         }
         
         let text = displaySettings.name ? getSpellTypes(true).find(t => t.value === mode)?.label : '';
+        const thisSelected = game.materialDeck.Helpers.isSynced(data.settings.spellbookMode.setSync, 'spellbookMode.syncFilter', 'spellbookMode.',  'token');
 
         return {
             text,
@@ -249,6 +237,7 @@ export const spellbookMode = {
     },
 
     onCastSpellKeyDown: function(data) {
+        if (!data.actor) return;
         const settings = data.settings.spellbookMode;
         const onPressSettings = settings[data.actionType];
         const spell = getSpellbook(data.actor, settings);
@@ -257,6 +246,7 @@ export const spellbookMode = {
     },
 
     onPrepareSpellKeyDown: function(data) {
+        if (!data.actor) return;
         const settings = data.settings.spellbookMode;
         const mode = settings[data.actionType].prepare.mode;
         const spell = getSpellbook(data.actor, settings);
@@ -588,7 +578,7 @@ export function getSpellTypes(includeCantrips=false) {
 }
 
 function getSpellbook(actor, settings) {
-    
+    if (!actor) return;
     let spells = Array.from(actor.items).filter(i=>i.type === 'spell');
     const filter = settings.selection.filter;
 

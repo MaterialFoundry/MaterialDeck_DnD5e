@@ -148,13 +148,16 @@ export const tokenMode = {
         const settings = data.settings.tokenMode.stats;
 
         let text = "";
-
-        const hp = data.actor.system.attributes.hp;
-        if (settings.mode === "HP" && settings.hp.mode === 'nr') 
-            text = hp.value + "/" + hp.max;
-        else if (settings.mode === "TempHP")
-            text = hp.temp !== null ? hp.temp : 0;
- 
+        let hp = {value: 0, temp: 0, max: 0};
+      
+        if (data.actor) {
+            hp = data.actor.system.attributes.hp;
+            if (settings.mode === "HP" && settings.hp.mode === 'nr') 
+                text = hp.value + "/" + hp.max;
+            else if (settings.mode === "TempHP")
+                text = hp.temp !== null ? hp.temp : 0;
+        }
+        
         return {
             text, 
             icon: settings.mode === 'HP' && data.settings.display.icon === 'stats' ? Helpers.getImage("hp_empty.png") : "", 
@@ -172,7 +175,7 @@ export const tokenMode = {
 
     onUpdateAC: function(data) {
         return {
-            text: data.actor.system.attributes.ac.value, 
+            text: data.actor ? data.actor.system.attributes.ac.value : '', 
             icon: data.settings.display.icon == 'stats' ? 'icons/equipment/shield/heater-steel-worn.webp' : ''
         }
     },
@@ -180,28 +183,30 @@ export const tokenMode = {
     onUpdateSpeed: function(data) {
         let text = "";
 
-        const movement = data.actor.system.attributes.movement;
+        if (data.actor) {
+            const movement = data.actor.system.attributes.movement;
 
-        if (movement.burrow > 0) text += `${localize("MovementBurrow", "DND5E")}: ${movement.burrow + movement.units}`;
-        if (movement.climb > 0) {
-            if (text.length > 0) text += '\n';
-            text += `${localize("MovementClimb", "DND5E")}: ${movement.climb + movement.units}`;
-        }
-        if (movement.fly > 0) {
-            if (text.length > 0) text += '\n';
-            text += `${localize("MovementFly", "DND5E")}: ${movement.fly + movement.units}`;
-        }
-        if (movement.hover > 0) {
-            if (text.length > 0) text += '\n';
-            text += `${localize("MovementHover", "DND5E")}: ${movement.hover + movement.units}`;
-        }
-        if (movement.swim > 0) {
-            if (text.length > 0) text += '\n';
-            text += `${localize("MovementSwim", "DND5E")}: ${movement.swim + movement.units}`;
-        }
-        if (movement.walk > 0) {
-            if (text.length > 0) text += '\n';
-            text += `${localize("MovementWalk", "DND5E")}: ${movement.walk + movement.units}`;
+            if (movement.burrow > 0) text += `${localize("MovementBurrow", "DND5E")}: ${movement.burrow + movement.units}`;
+            if (movement.climb > 0) {
+                if (text.length > 0) text += '\n';
+                text += `${localize("MovementClimb", "DND5E")}: ${movement.climb + movement.units}`;
+            }
+            if (movement.fly > 0) {
+                if (text.length > 0) text += '\n';
+                text += `${localize("MovementFly", "DND5E")}: ${movement.fly + movement.units}`;
+            }
+            if (movement.hover > 0) {
+                if (text.length > 0) text += '\n';
+                text += `${localize("MovementHover", "DND5E")}: ${movement.hover + movement.units}`;
+            }
+            if (movement.swim > 0) {
+                if (text.length > 0) text += '\n';
+                text += `${localize("MovementSwim", "DND5E")}: ${movement.swim + movement.units}`;
+            }
+            if (movement.walk > 0) {
+                if (text.length > 0) text += '\n';
+                text += `${localize("MovementWalk", "DND5E")}: ${movement.walk + movement.units}`;
+            }
         }
         
         return{
@@ -211,9 +216,9 @@ export const tokenMode = {
     },
 
     onUpdateInitiative: function(data) {
-        const init = data.actor.system.attributes.init.total;
+        const init = data.actor?.system.attributes.init.total;
         return{
-            text: (init >= 0 ? "+" : "") + init, 
+            text: data.actor ? (init >= 0 ? "+" : "") + init : '', 
             icon: data.settings.display.icon == 'stats' ? Helpers.getImage("d20.png") : '',
             options: { dim: data.settings.display.icon === 'stats' }
         };
@@ -221,12 +226,15 @@ export const tokenMode = {
 
     onUpdateHitDice: function(data) {
         let text = "";
-        const hitDice = data.actor.system.attributes.hd;
-        
-        for (let key of Object.keys(hitDice.bySize)) {
-            if (text !== '') text += ', '
-            text += `${hitDice.bySize[key]}${key}`
+
+        const hitDice = data.actor?.system?.attributes?.hd;
+        if (hitDice?.bySize) {
+            for (let key of Object.keys(hitDice.bySize)) {
+                if (text !== '') text += ', '
+                text += `${hitDice.bySize[key]}${key}`
+            }
         }
+        
         return{
             text, 
             icon: data.settings.display.icon == 'stats' ? Helpers.getImage("d20.png") : '',
@@ -236,22 +244,24 @@ export const tokenMode = {
 
     onUpdateSpellcasting: function(data) {
         const settings = data.settings.tokenMode.stats.spellcasting;
-        const system = data.actor.system;
+        const system = data.actor?.system;
         let text = '';
 
-        if (settings.mode === 'ability') 
+        if (system) {
+            if (settings.mode === 'ability') 
                 text = game.system.config.abilities[system.attributes.spellcasting].label;
-        else if (settings.mode === 'dc') 
-                text = system.attributes.spell.dc;
-        else if (settings.mode === 'modifier')  {
-            const mod = system.attributes.spell.mod;
-            text = mod >= 0 ? `+${mod}` : mod
+            else if (settings.mode === 'dc') 
+                    text = system.attributes.spell.dc;
+            else if (settings.mode === 'modifier')  {
+                const mod = system.attributes.spell.mod;
+                text = mod >= 0 ? `+${mod}` : mod
+            }
+            else if (settings.mode === 'spellSlots') {
+                const slots = system.spells[settings.slots];
+                text = `${slots.value}/${slots.max}`
+            }
         }
-        else if (settings.mode === 'spellSlots') {
-            const slots = system.spells[settings.slots];
-            text = `${slots.value}/${slots.max}`
-        }
-
+        
         return {
             text,
             icon: data.settings.display.icon == 'stats' ? Helpers.getImage("skills/arc.png") : '',
@@ -262,17 +272,19 @@ export const tokenMode = {
     onUpdateCurrency: function(data) {
         const currencyType = data.settings.tokenMode.stats.currency;
         let text = '';
-        const currency = data.actor.system.currency;
-        if (currencyType === 'all') {
-            for (let key of Object.keys(CONFIG.DND5E.currencies)) {
-                if (currency[key] !== 0) {
-                    if (text !== '') text += ', ';
-                    text += `${currency[key]}${CONFIG.DND5E.currencies[key].abbreviation}`
-                }
-            }  
-        } 
-        else 
-            text = `${currency[currencyType]}${CONFIG.DND5E.currencies[currencyType].abbreviation}`
+        const currency = data.actor?.system?.currency;
+        if (currency) {
+            if (currencyType === 'all') {
+                for (let key of Object.keys(CONFIG.DND5E.currencies)) {
+                    if (currency[key] !== 0) {
+                        if (text !== '') text += ', ';
+                        text += `${currency[key]}${CONFIG.DND5E.currencies[key].abbreviation}`
+                    }
+                }  
+            } 
+            else 
+                text = `${currency[currencyType]}${CONFIG.DND5E.currencies[currencyType].abbreviation}`
+        }
         
         return {
             text, 
@@ -292,19 +304,26 @@ export const tokenMode = {
     onUpdateXP: function(data) {
         const settings = data.settings.tokenMode.stats;
         let text = '';
-        const xp = data.actor.system.details.xp;
-
-        if (settings.hp.mode === 'nr')
-            text = `${xp.value}/${xp.max}`;
-
+        const xp = data.actor?.system?.details?.xp;
+        let available = 0;
+        let maximum = 0;
+        if (xp) {
+            available = xp.value;
+            maximum = xp.max;
+            if (settings.hp.mode === 'nr') {
+                text = maximum ? `${available}/${maximum}` : available;
+            }
+            if (!maximum) maximum = available;
+        }
+        
         return {
             text, 
             icon: data.settings.display.icon == 'stats' ? Helpers.getImage('progression.png') : '',
             options: { 
                 dim: data.settings.display.icon == 'stats',
                 uses: {
-                    available: xp.value,
-                    maximum: xp.max,
+                    available,
+                    maximum,
                     box: settings.hp.mode === 'box',
                     bar: settings.hp.mode === 'bar'
                 }
@@ -318,16 +337,18 @@ export const tokenMode = {
 
         let text = "";
         
-        if (statsMode == "Ability")
-            text += data.actor.system.abilities?.[ability].value;
-        else if (statsMode == "AbilityMod") {
-            const mod = data.actor.system.abilities?.[ability].mod;
-            text += (mod >= 0 ? "+" : "") + mod;
+        if (data.actor) {
+            if (statsMode == "Ability")
+                text += data.actor.system.abilities?.[ability].value;
+            else if (statsMode == "AbilityMod") {
+                const mod = data.actor.system.abilities?.[ability].mod;
+                text += (mod >= 0 ? "+" : "") + mod;
+            }
+            else if (statsMode == "Save") {
+                const save = data.actor.system.abilities?.[ability].save.value;
+                text += (save >= 0 ? "+" : "") + save;
+            }  
         }
-        else if (statsMode == "Save") {
-            const save = data.actor.system.abilities?.[ability].save.value;
-            text += (save >= 0 ? "+" : "") + save;
-        }  
         
         return {
             text, 
@@ -341,13 +362,15 @@ export const tokenMode = {
         const settings = data.settings.tokenMode.stats;
         let text = "";
 
-        let skill;
-        if (statsMode === "Skill") {
-            skill = data.actor.system.skills?.[settings.skill].total;
-            text += (skill >= 0 ? "+" : "") + skill;
+        if (data.actor) {
+            let skill;
+            if (statsMode === "Skill") {
+                skill = data.actor.system.skills?.[settings.skill].total;
+                text += (skill >= 0 ? "+" : "") + skill;
+            }
+            else if (statsMode == "SkillPassive")
+                text += data.actor.system.skills?.[settings.skill].passive;
         }
-        else if (statsMode == "SkillPassive")
-            text += data.actor.system.skills?.[settings.skill].passive;
         
         return {
             text, 
@@ -357,9 +380,9 @@ export const tokenMode = {
     },
 
     onUpdateProficiency: function(data) {
-        const prof = data.actor.system.attributes.prof;
+        const prof = data.actor?.system?.attributes?.prof;
         return {
-            text: (prof >= 0 ? "+" : "") + prof, 
+            text: prof ? (prof >= 0 ? "+" : "") + prof : '', 
             icon: data.settings.display.icon == 'stats' ? Helpers.getImage("progression.png") : '', 
             options: { dim: data.settings.display.icon == 'stats' }
         };
@@ -373,7 +396,7 @@ export const tokenMode = {
         const settings = data.settings.tokenMode.keyUp.condition;
         if ((data.hook === 'createActiveEffect' || data.hook === 'deleteActiveEffect') && data.args[0].parent.id !== data.actor.id) return 'doNothing';
 
-        const conditionActive = getConditionActive(data.actor, settings.condition);
+        const conditionActive = data.actor ? getConditionActive(data.actor, settings.condition) : false;
         const displayIcon = data.settings.display.icon === 'onPress';
 
         return {
@@ -394,17 +417,6 @@ export const tokenMode = {
                 effect.delete();
         else
             data.actor.toggleStatusEffect(settings.condition);
-    },
-
-    onUpdateRollInitiative: function(data) {
-        return{
-            icon: data.settings.display.icon == 'onPress' ? Helpers.getImage("d20.png") : '',
-            options: { dim: data.settings.display.icon === 'onPress' }
-        };
-    },
-
-    onKeydownRollInitiative: function(data) {
-        data.actor.rollInitiative({rerollInitiative: true});
     },
 
     onKeydownRoll: function(data) {
@@ -438,14 +450,14 @@ export const tokenMode = {
 
     getSettings: function() {
         return [
-            ...getTokenStats(),
-            ...getTokenOnPress(),
-            ...getTokenOnPress('hold'),
+            ...getTokenStats('pageWide.stats'),
+            ...getTokenOnPress('keyUp', 'pageWide.keyUp'),
+            ...getTokenOnPress('hold', 'pageWide.hold'),
         ]
     }
 }
 
-export function getTokenStats() {
+export function getTokenStats(sync) {
     return [
         {
             id: "tokenMode.stats.mode",
@@ -478,6 +490,7 @@ export function getTokenStats() {
                     id: "tokenMode.stats.hp.mode",
                     type: "select",
                     default: "nr",
+                    sync,
                     options: [
                         {value:'nr', label: localize('Number', 'DND5E') },
                         {value:'box', label: `${localize('Box', 'MD')}` },
@@ -497,6 +510,7 @@ export function getTokenStats() {
                             label: localize('Mode', 'MD'),
                             id: "tokenMode.stats.spellcasting.mode",
                             type: "select",
+                            sync,
                             default: "ability",
                             options: [
                                 { value: 'ability', label: localize('Ability', 'DND5E') },
@@ -508,6 +522,7 @@ export function getTokenStats() {
                             label: localize('Level', 'DND5E'),
                             id: "tokenMode.stats.spellcasting.slots",
                             type: "select",
+                            sync,
                             default: "spell1",
                             indent: 1,
                             visibility: { showOn: [ { ["tokenMode.stats.spellcasting.mode"]: "spellSlots" } ] },
@@ -518,6 +533,7 @@ export function getTokenStats() {
                     label: localize('Type', 'ALL'),
                     id: "tokenMode.stats.currency",
                     type: "select",
+                    sync,
                     default: "all",
                     visibility: { showOn: [ { ["tokenMode.stats.mode"]: "Currency" } ] },
                     options: getCurrencyTypes()
@@ -525,6 +541,7 @@ export function getTokenStats() {
                     label: localize('Ability', 'DND5E'),
                     id: "tokenMode.stats.ability",
                     type: "select",
+                    sync,
                     default: "str",
                     visibility: {
                         showOn: [
@@ -538,6 +555,7 @@ export function getTokenStats() {
                     label: localize('Skill', 'DND5E'),
                     id: "tokenMode.stats.skill",
                     type: "select",
+                    sync,
                     visibility: { showOn: [ { ["tokenMode.stats.mode"]: "Skill" }, { ["tokenMode.stats.mode"]: "SkillPassive" } ] },
                     options: getSkillList()
                 }
@@ -546,7 +564,7 @@ export function getTokenStats() {
     ]
 }
 
-function getTokenOnPress(mode='keyUp') {
+function getTokenOnPress(mode='keyUp', sync) {
     return [
         {
             id: `tokenMode.${mode}.mode`,
@@ -564,6 +582,7 @@ function getTokenOnPress(mode='keyUp') {
                     label: localize('Rule.Type.Condition', 'DND5E'),
                     id: `tokenMode.${mode}.condition.condition`,
                     type: "select",
+                    sync,
                     indent: 1,
                     link: getDocs('#token-mode'),
                     visibility: { showOn: [ { [`tokenMode.${mode}.mode`]: "condition" } ] },
@@ -580,6 +599,7 @@ function getTokenOnPress(mode='keyUp') {
                             label: "Roll",
                             id: `tokenMode.${mode}.roll.mode`,
                             type: "select",
+                            sync,
                             link: getDocs('#dice-roll'),
                             options: [
                                 {value:'initiative', label: localize('Initiative', 'DND5E')},
@@ -591,6 +611,7 @@ function getTokenOnPress(mode='keyUp') {
                             label: localize('Ability', 'DND5E'),
                             id: `tokenMode.${mode}.roll.ability`,
                             type: "select",
+                            sync,
                             indent: true,
                             visibility: { showOn: [ { [`tokenMode.${mode}.roll.mode`]: "ability" }, { [`tokenMode.${mode}.roll.mode`]: "save" } ] },
                             options: getAbilityList()
@@ -598,6 +619,7 @@ function getTokenOnPress(mode='keyUp') {
                             label: localize('Skill', 'DND5E'),
                             id: `tokenMode.${mode}.roll.skill`,
                             type: "select",
+                            sync,
                             indent: true,
                             visibility: { showOn: [ { [`tokenMode.${mode}.roll.mode`]: "skill" } ] },
                             options: getSkillList()
@@ -605,6 +627,7 @@ function getTokenOnPress(mode='keyUp') {
                             label: localize('RollModifier'),
                             id: `tokenMode.${mode}.roll.type`,
                             type: "select",
+                            sync,
                             visibility: { hideOn: [ { [`tokenMode.${mode}.roll.mode`]: "initiative" } ] },
                             options: [
                                 {value:'default', label: localize('Default', 'DND5E')},

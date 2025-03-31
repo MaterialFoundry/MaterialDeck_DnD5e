@@ -89,19 +89,6 @@ export const featureMode = {
         const mode = data.settings.featureMode.setSync.mode;
         const displaySettings = data.settings.display.featureMode.setSync;
 
-        let thisSelected = false;
-        const syncedSettings = game.materialDeck.streamDeck.syncedSettings?.page?.token?.['featureMode.syncFilter'];
-        if (syncedSettings && syncedSettings.length > 0) {
-            thisSelected = true;
-            for (let s of syncedSettings) {
-                const val = game.materialDeck.Helpers.getNestedObjectValue(s.key.replace('featureMode.', ''), data.settings.featureMode.setSync);
-                if (val !== s.value) {
-                    thisSelected = false;
-                    break;
-                }
-            }
-        }
-
         let icon = '';
         if (displaySettings.icon) {
             if (mode === 'any') icon = 'fas fa-suitcase';
@@ -113,6 +100,7 @@ export const featureMode = {
         }
         
         let text = displaySettings.name ? getFeatureTypes().find(t => t.value === mode)?.label : '';
+        const thisSelected = game.materialDeck.Helpers.isSynced(data.settings.featureMode.setSync, 'featureMode.syncFilter', 'featureMode.',  'token');
 
         return {
             text,
@@ -154,6 +142,7 @@ export const featureMode = {
     },
 
     onFeatureUpdate: function(data) {
+        if (!data.actor) return;
         const feature = getFeature(data.actor, data.settings.featureMode);
        
         if (data.hooks === 'updateItem' && data.args[0].id !== feature.id) return 'doNothing';
@@ -177,6 +166,7 @@ export const featureMode = {
     },
 
     onFeatureKeydown: function(data) {
+        if (!data.actor) return;
         const feature = getFeature(data.actor, data.settings.featureMode);
 
         const rollModifier = Helpers.rollModifier.get(true);

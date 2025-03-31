@@ -143,19 +143,6 @@ export const inventoryMode = {
         const displaySettings = data.settings.display.inventoryMode.setSync;
         const filter = data.settings.inventoryMode.setSync.selection.filter;
 
-        let thisSelected = false;
-        const syncedSettings = game.materialDeck.streamDeck.syncedSettings?.page?.token?.['inventoryMode.syncFilter'];
-        if (syncedSettings && syncedSettings.length > 0) {
-            thisSelected = true;
-            for (let s of syncedSettings) {
-                const val = game.materialDeck.Helpers.getNestedObjectValue(s.key.replace('inventoryMode.', ''), data.settings.inventoryMode.setSync);
-                if (val !== s.value) {
-                    thisSelected = false;
-                    break;
-                }
-            }
-        }
-
         let icon = '';
         if (displaySettings.icon) {
             let iconSrc = '';
@@ -189,6 +176,7 @@ export const inventoryMode = {
         }
         
         let text = displaySettings.name ? getItemTypes().find(t => t.value === mode)?.label : '';
+        const thisSelected = game.materialDeck.Helpers.isSynced(data.settings.inventoryMode.setSync, 'inventoryMode.syncFilter', 'inventoryMode.',  'token');
 
         return {
             text,
@@ -226,6 +214,7 @@ export const inventoryMode = {
     },
 
     onInventoryUpdate: function(data) {
+        if (!data.actor) return;
         const settings = data.settings.inventoryMode;
         const item = getItem(data.actor, settings);
         if (!item) return;
@@ -292,6 +281,7 @@ export const inventoryMode = {
     },
 
     onKeypressUseItem: function(data) {
+        if (!data.actor) return;
         const settings = data.settings.inventoryMode;
         const onPressSettings = settings[data.actionType];
         const item = getItem(data.actor, settings);
@@ -300,6 +290,7 @@ export const inventoryMode = {
     },
 
     onKeypressEquip: function(data) {
+        if (!data.actor) return;
         const settings = data.settings.inventoryMode;
         const mode = settings[data.actionType].equip.mode;
         const item = getItem(data.actor, settings);
@@ -311,6 +302,7 @@ export const inventoryMode = {
     },
 
     onKeypressSetQuantity: function(data) {
+        if (!data.actor) return;
         const settings = data.settings.inventoryMode;
         const setQuantitySettings = settings[data.actionType].setQuantity;
         const item = getItem(data.actor, settings);
@@ -323,6 +315,7 @@ export const inventoryMode = {
     },
 
     onKeypressSetCharges: function(data) {
+        if (!data.actor) return;
         const settings = data.settings.inventoryMode;
         const setChargeSettings = settings.setCharges;
         const item = getItem(data.actor, settings);
