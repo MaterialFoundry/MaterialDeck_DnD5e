@@ -11,10 +11,10 @@ let inventoryOffset = 0;
 export const inventoryMode = {
 
     updateAll: function() {
-        for (let device of game.materialDeck.streamDeck.deviceManager.devices) {
+        for (let device of materialDeck.streamDeck.deviceManager.devices) {
             for (let button of device.buttons.buttons) {
-                if (game.materialDeck.Helpers.getButtonAction(button) !== 'token') continue;
-                if (game.materialDeck.Helpers.getButtonSettings(button).mode !== 'inventory') continue;
+                if (materialDeck.Helpers.getButtonAction(button) !== 'token') continue;
+                if (materialDeck.Helpers.getButtonSettings(button).mode !== 'inventory') continue;
                 button.update('md-dnd5e.updateAllTokenInventory')
             }
         }
@@ -22,7 +22,7 @@ export const inventoryMode = {
 
     getActions: function(settings) {
         let actions = { update: [], keyDown: [], keyUp: [], hold: [] };
-        const holdTime = game.materialDeck.holdTime;
+        const holdTime = materialDeck.holdTime;
 
         const inventorySettings = settings.inventoryMode;
 
@@ -176,7 +176,7 @@ export const inventoryMode = {
         }
         
         let text = displaySettings.name ? getItemTypes().find(t => t.value === mode)?.label : '';
-        const thisSelected = game.materialDeck.Helpers.isSynced(data.settings.inventoryMode.setSync, 'inventoryMode.syncFilter', 'inventoryMode.',  'token');
+        const thisSelected = materialDeck.Helpers.isSynced(data.settings.inventoryMode.setSync, 'inventoryMode.syncFilter', 'inventoryMode.',  'token');
 
         return {
             text,
@@ -317,7 +317,7 @@ export const inventoryMode = {
     onKeypressSetCharges: function(data) {
         if (!data.actor) return;
         const settings = data.settings.inventoryMode;
-        const setChargeSettings = settings.setCharges;
+        const setChargeSettings = settings[data.actionType].setCharges;
         const item = getItem(data.actor, settings);
         if (!item) return;
         
@@ -682,11 +682,11 @@ function getItem(actor, settings) {
     if (!filter.unattuned) items = items.filter(i => i.system.attuned === true);
 
     if (settings.mode === 'any') 
-        items = items.filter(i => i.type === 'weapon' || i.type === 'equipment' || i.type === 'consumable' || i.type === 'loot' || i.type === 'container')
+        items = items.filter(i => i.type === 'weapon' || i.type === 'equipment' || i.type === 'consumable' || i.type === 'loot' || i.type === 'tool' || i.type === 'container')
     else
         items = items.filter(i => i.type === settings.mode);
 
-    items = game.materialDeck.Helpers.sort(items, settings.selection.order);
+    items = materialDeck.Helpers.sort(items, settings.selection.order);
 
     if (!items || items.length === 0) return;
 
@@ -698,7 +698,7 @@ function getItem(actor, settings) {
     else if (settings.selection.mode === 'nameId') {
         item = items.find(i => i.id === settings.selection.nameId.split('.').pop());
         if (!item) item = items.find(i => i.name === settings.selection.nameId);
-        if (!item) item = items.find(i => game.materialDeck.Helpers.stringIncludes(i.name, settings.selection.nameId));
+        if (!item) item = items.find(i => materialDeck.Helpers.stringIncludes(i.name, settings.selection.nameId));
     }
     return item;
 }
@@ -710,7 +710,7 @@ function useItem(item, settings) {
     const supportedAttackModes = item.system.attackModes;
 
     if (attackMode !== 'default' && !supportedAttackModes.find(m => m.value === attackMode))
-        return game.materialDeck.notify('warn', localize("InvalidAttackMode", "", {attackMode, itemName: item.name}))
+        return materialDeck.notify('warn', localize("InvalidAttackMode", "", {attackMode, itemName: item.name}))
 
     Helpers.useItem(item, 
         {

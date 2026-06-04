@@ -11,11 +11,44 @@ export const tokenAction = {
     id: 'token',
 
     buttonActions: function(settings) {
-        if (settings.mode === 'token') return tokenMode.getActions(settings);
-        else if (settings.mode === 'inventory') return inventoryMode.getActions(settings);
-        else if (settings.mode === 'features') return featureMode.getActions(settings);
-        else if (settings.mode === 'spellbook') return spellbookMode.getActions(settings);
-        return { update: [], keyDown: [], keyUp: [] };
+        let actions = { update: [], keyDown: [], keyUp: [], hold: [], dial: [] };
+        if (settings.mode === 'token') actions = tokenMode.getActions(settings);
+        else if (settings.mode === 'inventory') actions = inventoryMode.getActions(settings);
+        else if (settings.mode === 'features') actions = featureMode.getActions(settings);
+        else if (settings.mode === 'spellbook') actions = spellbookMode.getActions(settings);
+
+        actions.update.push({
+            run: this.updateWoundOverlay,
+            on: ['updateActor', 'createToken', 'deleteToken'],
+            source: 'always'
+        })
+
+        return actions;
+    },
+
+    updateWoundOverlay: function(data) {
+        if (!data.actor) return;
+        const settings = data.settings.overlay;
+        if (!settings || settings.mode === "none") return;
+
+        const hp = data.actor.system.attributes.hp;
+        const perc = hp.value/hp.max;
+
+        const overlayData = materialDeck.overlays.get(settings.mode);
+
+        let overlay = "null";
+        for (let o of overlayData.overlays) {
+            if (perc > o.value) continue;
+            overlay = structuredClone(o);
+            break;
+        }
+
+        if (overlay === "null") return;
+
+        if (!overlay.color) overlay.color = settings.color;
+        if (!overlay.alpha) overlay.alpha = settings.alpha;
+
+        return {overlay}
     },
 
     settingsConfig: function() {
@@ -49,6 +82,47 @@ export const tokenAction = {
                 visibility: { showOn: [ { mode: "spellbook" } ] },
                 indent: 1,
                 settings: spellbookMode.getSettings()
+            },{
+                id: "overlay-wrapper",
+                type: "wrapper",
+                before: "color-wrapper",
+                settings: [
+                    {
+                        id: "overlay-contents",
+                        type: "wrapper",
+                        label: "Wound Overlay",
+                        expandable: true,
+                        settings: [
+                            {
+                                label: localize('Overlays.Wound', 'MD'),
+                                id: "overlay.mode",
+                                type: "select",
+                                options: [
+                                    { value: "none", label: localize("None", "MD") },
+                                    ...materialDeck.overlays.getList("wound")
+                                ]
+                            },{
+                                label: localize('Opacity', 'MD'),
+                                id: "overlay.alpha",
+                                type: "range",
+                                default: 0.6,
+                                min: 0,
+                                max: 1,
+                                step: 0.05,
+                                displayValue: true,
+                                indent: true
+                            },{
+                                label: localize('Color', 'MD'),
+                                id: "overlay.color",
+                                type: "color",
+                                default: "#FF0000",
+                                indent: true
+                            }
+                        ]
+                    },{
+                        type: "line"
+                    }
+                ]
             },{
                 id: "colors-table",
                 prependColumnVisibility: [

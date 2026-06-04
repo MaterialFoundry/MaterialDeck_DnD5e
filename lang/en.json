@@ -39,6 +39,7 @@
         "SetTypeAndFilterSync": "Set Type & Filter Sync",
         "PreparationModeFilter": "Preparation Mode Filter",
         "FeatureTypeFilter": "Feature Type Filter",
-        "FeatureType": "Feature Type"
+        "FeatureType": "Feature Type",
+        "Ritual": "Ritual"
     }
 }

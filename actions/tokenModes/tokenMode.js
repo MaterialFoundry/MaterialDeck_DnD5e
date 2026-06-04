@@ -101,7 +101,7 @@ export const tokenMode = {
 
         const onPress = settings.tokenMode.keyUp?.mode;
         const onHold = settings.tokenMode.hold?.mode;
-        const holdTime = game.materialDeck.holdTime;
+        const holdTime = materialDeck.holdTime;
 
         if (onPress === 'condition') {
             actions.update.push({
@@ -424,7 +424,7 @@ export const tokenMode = {
         const rollMode = settings.type === 'default' ? Helpers.rollModifier.get(true) : settings.type;
 
         const rollData = {
-            ability: settings.ability,
+            ability: settings.mode === 'skill' ? undefined : settings.ability,
             skill: settings.skill,
             rolls: [ {
                 options: {

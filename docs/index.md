@@ -12,9 +12,11 @@ The Material Deck DnD5e system module adds DnD5e-dependent features to Material 
 
 
 ## Combatibility
+Tested on:<br>
+<b>Foundry VTT</b>: v13-v14<br>
+<b>Dungeons & Dragons 5e</b>: v5
 
-<b>Foundry VTT</b>: v12-v13<br>
-<b>Dungeons & Dragons 5e</b>: v4
+Requires Material Deck v2.2.0+.
 
 ## Feedback & Issues
 If you have any suggestions or bugs to report, feel free to:

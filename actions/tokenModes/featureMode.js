@@ -11,10 +11,10 @@ let featureOffset = 0;
 export const featureMode = {
 
     updateAll: function() {
-        for (let device of game.materialDeck.streamDeck.deviceManager.devices) {
+        for (let device of materialDeck.streamDeck.deviceManager.devices) {
             for (let button of device.buttons.buttons) {
-                if (game.materialDeck.Helpers.getButtonAction(button) !== 'token') continue;
-                if (game.materialDeck.Helpers.getButtonSettings(button).mode !== 'features') continue;
+                if (materialDeck.Helpers.getButtonAction(button) !== 'token') continue;
+                if (materialDeck.Helpers.getButtonSettings(button).mode !== 'features') continue;
                 button.update('md-dnd5e.updateAllTokenFeatures')
             }
         }
@@ -100,7 +100,7 @@ export const featureMode = {
         }
         
         let text = displaySettings.name ? getFeatureTypes().find(t => t.value === mode)?.label : '';
-        const thisSelected = game.materialDeck.Helpers.isSynced(data.settings.featureMode.setSync, 'featureMode.syncFilter', 'featureMode.',  'token');
+        const thisSelected = materialDeck.Helpers.isSynced(data.settings.featureMode.setSync, 'featureMode.syncFilter', 'featureMode.',  'token');
 
         return {
             text,
@@ -175,7 +175,7 @@ export const featureMode = {
         const supportedAttackModes = feature.system.attackModes;
         
         if (attackMode !== 'default' && !supportedAttackModes.find(m => m.value === attackMode))
-            return game.materialDeck.notify('warn', localize("InvalidAttackMode", "", {attackMode, itemName: feature.name}))
+            return materialDeck.notify('warn', localize("InvalidAttackMode", "", {attackMode, itemName: feature.name}))
     
         Helpers.useItem(feature, 
             {
@@ -555,7 +555,7 @@ function getFeature(actor, settings) {
         }
     }
 
-    if (settings.selection.order === 'name') features = game.materialDeck.Helpers.sort(features, settings.selection.order);
+    if (settings.selection.order === 'name') features = materialDeck.Helpers.sort(features, settings.selection.order);
 
     let feature;
     if (settings.selection.mode === 'nr') {
@@ -565,7 +565,7 @@ function getFeature(actor, settings) {
     else if (settings.selection.mode === 'nameId') {
         feature = features.find(i => i.id === settings.selection.nameId.split('.').pop());
         if (!feature) feature = features.find(i => i.name === settings.selection.nameId);
-        if (!feature) feature = features.find(i => game.materialDeck.Helpers.stringIncludes(i.name, settings.selection.nameId));
+        if (!feature) feature = features.find(i => materialDeck.Helpers.stringIncludes(i.name, settings.selection.nameId));
     }
 
     return feature;

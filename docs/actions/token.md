@@ -7,6 +7,8 @@ The token action has extra features for the `Token` mode, and adds new modes:
 * [Features Mode](#features-mode): Display and roll actor features
 * [Spellbook Mode](#spellbook-mode): Display and roll spells
 
+All modes also have the [Wound Overlay](#wound-overlay) functionality.
+
 ## Token Mode
 The [Token mode](https://materialfoundry.github.io/MaterialDeck/actions/token/token/#token-mode) has new `Stats`, `On Press` and `On Hold` options.
 
@@ -101,3 +103,25 @@ If you then set the offset to 9, it will display items 10 - 19.
 | Offset            | The value to set the offset to (in case of `Set to Value`), or the value to increment the offset with (in case of `Increase/Decrease`).<br> The offset can be any value, positive or negative. |
 | Display           | <b>-Offset</b>: Display the current offset on the Stream Deck.<br><b>-Icon</b>: Display an icon on the Stream Deck. |
 | Colors            | <b>-On Color</b>: (`Set to Value` only) A border is drawn on the Stream Deck of this color if the current offset is equal to the offset configured in `Offset`.<br><b>-Off Color</b>: (`Set to Value` only) A border is drawn on the Stream Deck of this color if the current offset is not equal to the offset configured in `Offset`.<br><b>-Background</b>: Background color of the button. |
+
+## Wound Overlay
+<div class="imgContainer"><img src="../../img/wound-overlays.jpg"></div>
+Wound overlays can give the approximate health state of a token. For example, based on how much relative HP a token has it can overlay one or more blood drops over the token icon:
+
+| HP Percentage | Overlay       |
+|---------------|---------------|
+| 76% - 100%    | No overlay    |
+| 51% - 75%     | 1 Droplets    |
+| 26% - 50%     | 2 Droplets    |
+| 1% - 25%      | 3 Droplets    |
+| 0             | Skull overlay |
+
+This can be useful if you want to give players an overview of a token's health, without giving the actual HP.
+
+Wound overlays are available in all Token Modes.
+
+| Option            | Description   |
+|-------------------|---------------|
+| Wound Overlay     | Sets the overlay type. |
+| Opacity           | Sets the opacity of the overlay, with 0 being fully transparant and 1 being fully opaque. |
+| Color             | Sets the color of the overlay. |
